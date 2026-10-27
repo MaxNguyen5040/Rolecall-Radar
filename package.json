@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "seed": "tsx prisma/seed.ts",
+    "seed": "tsx src/seed.ts",
     "poll": "tsx src/pollOnce.ts"
   },
   "type": "module",
