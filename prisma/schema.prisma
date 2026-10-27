@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Ats {
+  GREENHOUSE
+  LEVER
+  ASHBY
+}
+
+model Company {
+  id         Int       @id @default(autoincrement())
+  name       String
+  ats        Ats
+  boardToken String
+  region     String?
+  active     Boolean   @default(true)
+  postings   Posting[]
+  pollRuns   PollRun[]
+
+  @@unique([ats, boardToken])
+}
+
+model Posting {
+  id             Int       @id @default(autoincrement())
+  companyId      Int
+  company        Company   @relation(fields: [companyId], references: [id])
+  externalId     String
+  title          String
+  location       String?
+  url            String
+  isRemote       Boolean?
+  sourcePostedAt DateTime?
+  firstSeenAt    DateTime  @default(now())
+  matched        Boolean   @default(false)
+  alertedAt      DateTime?
+
+  @@unique([companyId, externalId])
+  @@index([firstSeenAt])
+}
+
+model PollRun {
+  id         Int       @id @default(autoincrement())
+  companyId  Int
+  company    Company   @relation(fields: [companyId], references: [id])
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+  ok         Boolean   @default(false)
+  newCount   Int       @default(0)
+  error      String?
+}
