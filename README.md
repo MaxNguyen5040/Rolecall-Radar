@@ -24,4 +24,14 @@ TypeScript, Node.js, Express, Zod, PostgreSQL + Prisma, node-cron, React (Vite),
 
 ## Run it
 
-Coming in Phase 1.
+Requires Node 22+ and Docker.
+
+```bash
+cp .env.example .env          # add DISCORD_WEBHOOK_URL
+docker compose up -d db
+npm install
+npx prisma migrate dev
+npm run seed                  # load companies
+npm run poll                  # poll once (first poll per company is a silent baseline)
+npm run dev                   # hourly scheduler
+```
