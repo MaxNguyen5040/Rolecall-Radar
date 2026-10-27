@@ -5,10 +5,7 @@ import { matchPosting } from './filters.js';
 import { fetchPostings } from './fetchers/index.js';
 import { log } from './log.js';
 
-const DELAY_BETWEEN_COMPANIES_MS = 1000;
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-export async function pollCompany(company: Company): Promise<void> {
+export async function pollCompany(company: Company): Promise<{ ok: boolean; newCount: number }> {
   const started = Date.now();
   const run = await prisma.pollRun.create({ data: { companyId: company.id } });
 
@@ -54,6 +51,7 @@ export async function pollCompany(company: Company): Promise<void> {
       isBaseline,
       ms: Date.now() - started,
     });
+    return { ok: true, newCount };
   } catch (err) {
     await prisma.pollRun.update({
       where: { id: run.id },
@@ -65,6 +63,7 @@ export async function pollCompany(company: Company): Promise<void> {
       error: String(err),
       ms: Date.now() - started,
     });
+    return { ok: false, newCount: 0 };
   }
 }
 
@@ -73,9 +72,15 @@ export async function pollAll(): Promise<void> {
     where: { active: true },
     orderBy: { id: 'asc' },
   });
+  const started = Date.now();
   log('poll_start', { companies: companies.length });
-  for (const [i, company] of companies.entries()) {
-    if (i > 0) await sleep(DELAY_BETWEEN_COMPANIES_MS);
-    await pollCompany(company);
+
+  let failed = 0;
+  let newCount = 0;
+  for (const company of companies) {
+    const result = await pollCompany(company);
+    if (!result.ok) failed++;
+    newCount += result.newCount;
   }
+  log('poll_finished', { companies: companies.length, failed, newCount, ms: Date.now() - started });
 }
