@@ -1,8 +1,8 @@
-# NewGradRadar
+# Rolecall Radar
 
-Polls public ATS job boards (Greenhouse, Lever, Ashby) for a list of target companies, stores each posting once in PostgreSQL, and sends a Discord alert when a new posting matches my filters (new grad / entry level roles in Toronto, Canada or the US).
+A small service that watches the Greenhouse, Lever and Ashby job boards of companies I want to work at. It saves every posting once in Postgres and sends me a Discord message when a new one looks like an entry level or new grad role in Toronto, Canada or the US. The goal is to see a posting before it shows up on LinkedIn.
 
-> Work in progress. Sections below are filled in as each phase ships.
+Still being built, so this README will grow as I go.
 
 ## Architecture
 
