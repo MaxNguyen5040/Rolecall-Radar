@@ -37,7 +37,7 @@ export async function fetchJson(url: string): Promise<unknown> {
     try {
       const res = await fetch(url, {
         signal: AbortSignal.timeout(TIMEOUT_MS),
-        headers: { 'User-Agent': 'job-aggregator/1.0', Accept: 'application/json' },
+        headers: { 'User-Agent': 'newgrad-radar/1.0', Accept: 'application/json' },
       });
       if (!res.ok) throw new HttpError(res.status, host);
       return await res.json();

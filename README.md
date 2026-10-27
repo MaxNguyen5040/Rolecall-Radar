@@ -1,4 +1,4 @@
-# Job Aggregator
+# NewGradRadar
 
 Polls public ATS job boards (Greenhouse, Lever, Ashby) for a list of target companies, stores each posting once in PostgreSQL, and sends a Discord alert when a new posting matches my filters (new grad / entry level roles in Toronto, Canada or the US).
 
