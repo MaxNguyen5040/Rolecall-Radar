@@ -1,4 +1,5 @@
 import cron from 'node-cron';
+import { createApp } from './api.js';
 import { config } from './config.js';
 import { log } from './log.js';
 import { pollAll } from './poller.js';
@@ -22,4 +23,5 @@ async function runPoll(): Promise<void> {
 
 cron.schedule(config.POLL_CRON, runPoll);
 log('scheduler_started', { cron: config.POLL_CRON });
+createApp().listen(config.PORT, () => log('api_listening', { port: config.PORT }));
 void runPoll();
