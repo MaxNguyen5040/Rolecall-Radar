@@ -35,3 +35,11 @@ npm run seed                  # load companies
 npm run poll                  # poll once (first poll per company is a silent baseline)
 npm run dev                   # hourly scheduler
 ```
+
+## Metrics
+
+```bash
+docker compose exec -T db psql -U postgres -d jobs -v since="'2026-10-29'" < sql/metrics.sql
+```
+
+Prints companies polled, postings ingested, poll success rate and median posting-to-alert time (Lever and Ashby only). Set `since` to the day real polling started so setup test alerts don't skew the median.
