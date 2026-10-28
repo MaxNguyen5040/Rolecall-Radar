@@ -1,5 +1,6 @@
 import { Prisma, type Company } from '@prisma/client';
 import { sendAlert } from './alert.js';
+import { config } from './config.js';
 import { prisma } from './db.js';
 import { matchPosting } from './filters.js';
 import { fetchPostings } from './fetchers/index.js';
@@ -17,7 +18,7 @@ export async function pollCompany(company: Company): Promise<{ ok: boolean; newC
 
     let newCount = 0;
     for (const posting of postings) {
-      const { matched, priority } = matchPosting(posting);
+      const { matched, priority } = matchPosting(posting, { broad: config.BROAD_MATCH });
       let created;
       try {
         created = await prisma.posting.create({

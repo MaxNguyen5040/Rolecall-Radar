@@ -67,3 +67,23 @@ describe('matchPosting', () => {
     expect(us).toEqual({ matched: true, priority: false });
   });
 });
+
+describe('broad matching', () => {
+  it.each([
+    ['Software Engineer', true],
+    ['Backend Engineer, Payments', true],
+    ['Full Stack Developer', true],
+    ['Senior Software Engineer', false],
+    ['Sales Engineer', false],
+    ['Staff Backend Engineer', false],
+    ['Software Engineer II', false],
+  ])('%s -> %s', (title, expected) => {
+    expect(matchesTitle(title, true)).toBe(expected);
+  });
+
+  it('stays off by default', () => {
+    const posting = { title: 'Software Engineer', location: 'Toronto, ON', isRemote: null };
+    expect(matchPosting(posting).matched).toBe(false);
+    expect(matchPosting(posting, { broad: true }).matched).toBe(true);
+  });
+});

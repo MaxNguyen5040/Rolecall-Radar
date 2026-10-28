@@ -18,6 +18,10 @@ const entryLevel =
 const excluded =
   /\b(senior|sr|staff|principal|lead|manager|director|intern|internship|co-op)\b|\s(ii|iii)\b/i;
 
+// Only used when broad matching is on, e.g. to collect alert timing data faster.
+const softwareRole =
+  /\b(software|backend|back-end|front-?end|full[\s-]?stack|web|mobile|ios|android|machine\s+learning|ml|data|devops)\s+(engineer|developer)\b|\bswe\b/i;
+
 // Province and state codes are case-sensitive so ", on" or ", in" in prose does not match.
 const canadaWords = /\b(canada|toronto|ontario|ottawa|waterloo|mississauga|kitchener)\b/i;
 const ontarioCode = /,\s*ON\b/;
@@ -89,9 +93,9 @@ const usStateCode = new RegExp(`,\\s*(${usStates})\\b`);
 // Bare "Remote" is accepted because boards rarely say which country.
 const remoteOnly = /^\s*remote\s*$/i;
 
-export function matchesTitle(title: string): boolean {
+export function matchesTitle(title: string, broad = false): boolean {
   if (excluded.test(title)) return false;
-  return entryLevel.test(title) || levelOne.test(title);
+  return entryLevel.test(title) || levelOne.test(title) || (broad && softwareRole.test(title));
 }
 
 export function matchesLocation(location: string | null, isRemote: boolean | null): boolean {
@@ -104,7 +108,10 @@ export function matchesLocation(location: string | null, isRemote: boolean | nul
   );
 }
 
-export function matchPosting({ title, location, isRemote }: FilterInput): FilterResult {
-  const matched = matchesTitle(title) && matchesLocation(location, isRemote);
+export function matchPosting(
+  { title, location, isRemote }: FilterInput,
+  { broad = false }: { broad?: boolean } = {},
+): FilterResult {
+  const matched = matchesTitle(title, broad) && matchesLocation(location, isRemote);
   return { matched, priority: matched && !!location && isCanada(location) };
 }
