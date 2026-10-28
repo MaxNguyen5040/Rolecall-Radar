@@ -13,7 +13,7 @@
     "poll": "tsx src/pollOnce.ts"
   },
   "type": "module",
-  "private": "true",
+  "private": true,
   "engines": {
     "node": ">=22"
   },
