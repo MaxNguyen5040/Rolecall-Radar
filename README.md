@@ -1,6 +1,6 @@
 # Rolecall Radar
 
-I wanted to see entry level and new grad postings before they show up on LinkedIn, so I built a service that watches company job boards for me. It polls the Greenhouse, Lever and Ashby boards of 130 companies every 15 minutes, saves each posting once in Postgres, and sends a Discord message when a new one looks like an entry level or new grad role in Toronto, Canada or the US.
+I wanted to see entry level and new grad postings before they show up on LinkedIn, so I built a service that watches company job boards for me. It polls the Greenhouse, Lever and Ashby boards of 130 companies every 15 minutes, saves each posting once in Postgres, and sends a Discord message when a new one looks like an entry level or new grad role (or, with `BROAD_MATCH` on, a general software engineer role) in Toronto, Canada or the US.
 
 <img src="docs/dashboard.png" alt="Dashboard showing entry level postings from several companies" width="720">
 
@@ -73,7 +73,9 @@ I ran it on a free plan EC2 `t3.micro` (Ubuntu 24.04) with Docker Compose, deplo
 ## Metrics
 
 ```bash
-docker compose exec -T db psql -U postgres -d jobs -v since="'2026-10-29'" < sql/metrics.sql
+docker compose exec -T db psql -U postgres -d jobs -v since="'2026-10-28 12:00'" < sql/metrics.sql
 ```
 
-Prints companies polled, postings ingested, poll success rate and median posting-to-alert time (Lever and Ashby only, since Greenhouse timestamps are approximate). Set `since` to the day real polling started so test alerts from setup don't skew the median.
+Prints companies polled, postings ingested, poll success rate and median posting-to-alert time (Lever and Ashby only, since Greenhouse timestamps are approximate). Set `since` to the time real polling started so test alerts from setup don't skew the median.
+
+On the server as of Oct 28, 2026: 130 companies polled, 23,636 postings stored, and 814 of 815 poll attempts succeeded (99.9%).
