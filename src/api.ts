@@ -1,5 +1,7 @@
 import { Ats, Prisma } from '@prisma/client';
 import express, { type ErrorRequestHandler } from 'express';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import { z } from 'zod';
 import { prisma } from './db.js';
 
@@ -69,6 +71,10 @@ export function createApp(): express.Express {
     });
     res.json(postings);
   });
+
+  // The built dashboard only exists in the Docker image, so skip it in dev and tests.
+  const webDist = path.resolve('web/dist');
+  if (existsSync(webDist)) app.use(express.static(webDist));
 
   app.use(handleError);
   return app;
