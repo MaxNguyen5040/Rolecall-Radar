@@ -6,7 +6,7 @@ I wanted to see entry level and new grad postings before they show up on LinkedI
 
 ## What it does
 
-- Polls 20 company boards (8 Greenhouse, 5 Lever, 7 Ashby) on an hourly cron.
+- Polls 85 company boards (48 Greenhouse, 7 Lever, 30 Ashby) on an hourly cron.
 - Dedupes with a unique key on company and posting ID, so each job is stored and alerted on once.
 - Treats the first poll of a new company as a silent baseline, so adding a company doesn't flood Discord with its whole backlog.
 - Posts matching new jobs to a Discord webhook, with Canada postings tagged `[Canada]`.
@@ -17,7 +17,7 @@ I wanted to see entry level and new grad postings before they show up on LinkedI
 
 ## How the filters work
 
-A posting matches when the title looks entry level and the location is in Canada, the US, or remote.
+A posting matches when the title looks entry level and the location is in Canada, the US, or remote. Setting `BROAD_MATCH=true` also accepts general software engineer titles (backend, frontend, full stack, mobile, data, ML), still skipping senior, staff, lead and intern roles.
 
 - Title keywords: new grad, entry level, early career, junior, university grad, "Engineer I", or a 2027 start date.
 - Titles with senior, staff, principal, lead, manager, director, intern or co-op are dropped.
@@ -59,7 +59,7 @@ For the dashboard in dev, run `npm run dev` in `web/` too (it proxies to the API
 npm test
 ```
 
-47 tests cover the filters, the three ATS parsers (against saved real responses), dedupe and the baseline rule, and the API. They hit a real Postgres database.
+55 tests cover the filters, the three ATS parsers (against saved real responses), dedupe and the baseline rule, and the API. They hit a real Postgres database.
 
 GitHub Actions runs lint, typecheck, the tests and the dashboard build on every push. On `main` it can also deploy over SSH to the EC2 box, which pulls the repo and rebuilds with `docker compose up -d --build`.
 
