@@ -1,12 +1,12 @@
 # Rolecall Radar
 
-I wanted to see entry level and new grad postings before they show up on LinkedIn, so I built a service that watches company job boards for me. It polls the Greenhouse, Lever and Ashby boards of 20 companies every hour, saves each posting once in Postgres, and sends a Discord message when a new one looks like an entry level or new grad role in Toronto, Canada or the US.
+I wanted to see entry level and new grad postings before they show up on LinkedIn, so I built a service that watches company job boards for me. It polls the Greenhouse, Lever and Ashby boards of 130 companies every 15 minutes, saves each posting once in Postgres, and sends a Discord message when a new one looks like an entry level or new grad role in Toronto, Canada or the US.
 
 <img src="docs/dashboard.png" alt="Dashboard showing entry level postings from several companies" width="720">
 
 ## What it does
 
-- Polls 130 company boards (68 Greenhouse, 10 Lever, 52 Ashby) on an hourly cron.
+- Polls 130 company boards (68 Greenhouse, 10 Lever, 52 Ashby) on a 15 minute cron.
 - Dedupes with a unique key on company and posting ID, so each job is stored and alerted on once.
 - Treats the first poll of a new company as a silent baseline, so adding a company doesn't flood Discord with its whole backlog.
 - Posts matching new jobs to a Discord webhook, with Canada postings tagged `[Canada]`.
@@ -40,7 +40,7 @@ npm install
 npx prisma migrate dev
 npm run seed                  # load companies
 npm run poll                  # poll once (the first poll per company is a silent baseline)
-npm run dev                   # API plus hourly scheduler
+npm run dev                   # API plus 15 minute scheduler
 ```
 
 For the dashboard in dev, run `npm run dev` in `web/` too (it proxies to the API on port 3000). To run everything the way production does, use `docker compose up -d --build` and open http://localhost:3000.
