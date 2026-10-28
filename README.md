@@ -6,7 +6,7 @@ I wanted to see entry level and new grad postings before they show up on LinkedI
 
 ## What it does
 
-- Polls 85 company boards (48 Greenhouse, 7 Lever, 30 Ashby) on an hourly cron.
+- Polls 130 company boards (68 Greenhouse, 10 Lever, 52 Ashby) on an hourly cron.
 - Dedupes with a unique key on company and posting ID, so each job is stored and alerted on once.
 - Treats the first poll of a new company as a silent baseline, so adding a company doesn't flood Discord with its whole backlog.
 - Posts matching new jobs to a Discord webhook, with Canada postings tagged `[Canada]`.
