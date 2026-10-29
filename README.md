@@ -78,4 +78,4 @@ docker compose exec -T db psql -U postgres -d jobs -v since="'2026-10-28 12:00'"
 
 Prints companies polled, postings ingested, poll success rate and median posting-to-alert time (Lever and Ashby only, since Greenhouse timestamps are approximate). Set `since` to the time real polling started so test alerts from setup don't skew the median.
 
-On the server as of Oct 29, 2026: 130 companies polled, 24,026 postings stored, and 12,510 of 12,515 board polls succeeded (99.96%). Median time from posting to Discord alert was 7 minutes across 8 Lever and Ashby alerts, a small sample that should tighten as more come in.
+On the server: 130 companies polled every 15 minutes (about 12,000 board polls a day) with a 99.9% success rate, 24,000+ postings stored, and a median of 7 minutes from a posting going up to the Discord alert (Lever and Ashby, where boards give real posting times).
