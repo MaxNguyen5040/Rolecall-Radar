@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres:16
+    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -13,6 +14,10 @@ services:
       test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 5s
       retries: 10
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '3'
 
   app:
     build: .
@@ -25,6 +30,10 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/jobs
     ports:
       - '3000:3000'
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '3'
 
 volumes:
   pgdata:
