@@ -6,6 +6,8 @@ const response = z.array(z.unknown());
 const job = z.object({
   id: z.string(),
   text: z.string(),
+  description: z.string().nullish(),
+  descriptionPlain: z.string().nullish(),
   hostedUrl: z.url(),
   createdAt: z.number().nullish(),
   workplaceType: z.string().nullish(),
@@ -29,6 +31,7 @@ export function parseLever(raw: unknown): NormalizedPosting[] {
     return {
       externalId: j.id,
       title: j.text.trim(),
+      description: j.descriptionPlain ?? j.description ?? null,
       location: locations,
       url: j.hostedUrl,
       isRemote: j.workplaceType ? j.workplaceType === 'remote' : null,

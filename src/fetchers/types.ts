@@ -4,6 +4,7 @@ import { log } from '../log.js';
 export interface NormalizedPosting {
   externalId: string;
   title: string;
+  description?: string | null;
   location: string | null;
   url: string;
   isRemote: boolean | null;

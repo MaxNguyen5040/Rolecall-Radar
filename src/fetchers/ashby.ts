@@ -6,6 +6,8 @@ const response = z.object({ jobs: z.array(z.unknown()) });
 const job = z.object({
   id: z.string(),
   title: z.string(),
+  descriptionPlain: z.string().nullish(),
+  descriptionHtml: z.string().nullish(),
   jobUrl: z.url(),
   location: z.string().nullish(),
   secondaryLocations: z.array(z.object({ location: z.string() })).nullish(),
@@ -29,6 +31,7 @@ export function parseAshby(raw: unknown): NormalizedPosting[] {
     return {
       externalId: j.id,
       title: j.title.trim(),
+      description: j.descriptionPlain ?? j.descriptionHtml ?? null,
       location: locations.length ? locations.join(' | ') : null,
       url: j.jobUrl,
       isRemote: j.isRemote ?? null,

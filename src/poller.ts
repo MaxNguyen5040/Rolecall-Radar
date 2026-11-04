@@ -22,7 +22,16 @@ export async function pollCompany(company: Company): Promise<{ ok: boolean; newC
       let created;
       try {
         created = await prisma.posting.create({
-          data: { ...posting, companyId: company.id, matched },
+          data: {
+            externalId: posting.externalId,
+            title: posting.title,
+            location: posting.location,
+            url: posting.url,
+            isRemote: posting.isRemote,
+            sourcePostedAt: posting.sourcePostedAt,
+            companyId: company.id,
+            matched,
+          },
         });
       } catch (err) {
         if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') continue;
@@ -31,7 +40,13 @@ export async function pollCompany(company: Company): Promise<{ ok: boolean; newC
       newCount++;
 
       if (matched && !isBaseline) {
-        const sent = await sendAlert({ company: company.name, priority, ...posting });
+        const sent = await sendAlert({
+          company: company.name,
+          priority,
+          title: posting.title,
+          location: posting.location,
+          url: posting.url,
+        });
         if (sent) {
           await prisma.posting.update({
             where: { id: created.id },

@@ -14,6 +14,8 @@ describe('title filter', () => {
     ['Software Engineer III', false],
     ['Junior Backend Developer', true],
     ['Early Career Software Engineer', true],
+    ['Junior Mechanical Engineer', false],
+    ['Entry Level Electrical Engineer', false],
     ['Software Engineer, New Grad 2027', true],
     ['Staff Engineer, New Grad Program', false],
     ['Mobile Engineer', false],
@@ -85,5 +87,28 @@ describe('broad matching', () => {
     const posting = { title: 'Software Engineer', location: 'Toronto, ON', isRemote: null };
     expect(matchPosting(posting).matched).toBe(false);
     expect(matchPosting(posting, { broad: true }).matched).toBe(true);
+  });
+
+  it('keeps SWE I roles and rejects software roles requiring three or more years', () => {
+    const posting = { title: 'Software Engineer I', location: 'Toronto, ON', isRemote: null };
+    expect(matchPosting(posting, { broad: true }).matched).toBe(true);
+    expect(
+      matchPosting(
+        { ...posting, description: 'Requires at least three years of software engineering experience.' },
+        { broad: true },
+      ).matched,
+    ).toBe(false);
+  });
+
+  it('rejects numeric three-year minimums but allows preferred experience', () => {
+    const posting = { title: 'Software Engineer', location: 'Toronto, ON', isRemote: null };
+    expect(
+      matchPosting({ ...posting, description: '3+ years of experience required.' }, { broad: true })
+        .matched,
+    ).toBe(false);
+    expect(
+      matchPosting({ ...posting, description: '3+ years of experience preferred.' }, { broad: true })
+        .matched,
+    ).toBe(true);
   });
 });

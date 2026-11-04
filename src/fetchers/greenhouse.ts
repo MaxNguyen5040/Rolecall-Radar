@@ -7,6 +7,7 @@ const job = z.object({
   id: z.number(),
   title: z.string(),
   absolute_url: z.url(),
+  content: z.string().nullish(),
   location: z.object({ name: z.string() }).nullish(),
   first_published: z.string().nullish(),
   updated_at: z.string().nullish(),
@@ -20,6 +21,7 @@ export function parseGreenhouse(raw: unknown): NormalizedPosting[] {
   return parseJobs(response.parse(raw).jobs, job, (j) => ({
     externalId: String(j.id),
     title: j.title.trim(),
+    description: j.content ?? null,
     location: j.location?.name ?? null,
     url: j.absolute_url,
     isRemote: null,

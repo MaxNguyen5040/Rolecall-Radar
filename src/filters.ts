@@ -2,6 +2,7 @@ export interface FilterInput {
   title: string;
   location: string | null;
   isRemote: boolean | null;
+  description?: string | null;
 }
 
 export interface FilterResult {
@@ -17,10 +18,40 @@ const entryLevel =
 
 const excluded =
   /\b(senior|sr|staff|principal|lead|manager|director|intern|internship|co-op)\b|\s(ii|iii)\b/i;
+const nonSoftwareDiscipline =
+  /\b(mechanical|electrical|civil|chemical|manufacturing|process|quality|industrial|structural|aerospace|biomedical|materials|environmental|facilities|construction)\b/i;
 
 // Only used when broad matching is on, e.g. to collect alert timing data faster.
 const softwareRole =
   /\b(software|backend|back-end|front-?end|full[\s-]?stack|web|mobile|ios|android|machine\s+learning|ml|data|devops)\s+(engineer|developer)\b|\bswe\b/i;
+const experienceYears =
+  /\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s*(?:\+|[-–]\s*\d+)?\s*(?:years?|yrs?)(?:\s+of)?(?:\s+(?:relevant|professional|software|engineering|industry|work))*\s+experience\b/i;
+const numberWords: Record<string, number> = {
+  one: 1,
+  two: 2,
+  three: 3,
+  four: 4,
+  five: 5,
+  six: 6,
+  seven: 7,
+  eight: 8,
+  nine: 9,
+  ten: 10,
+};
+
+function requiresThreeYears(description: string | null | undefined): boolean {
+  if (!description) return false;
+  const plainText = description.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/gi, ' ');
+  return plainText.split(/[.!?;\n]/).some((sentence) => {
+    const match = experienceYears.exec(sentence);
+    if (!match || /\b(preferred|ideally|desired|bonus|nice to have)\b/i.test(sentence)) {
+      return false;
+    }
+    const yearsText = match[1] ?? '';
+    const years = Number(yearsText) || numberWords[yearsText.toLowerCase()] || 0;
+    return years >= 3;
+  });
+}
 
 // Province and state codes are case-sensitive so ", on" or ", in" in prose does not match.
 const canadaWords = /\b(canada|toronto|ontario|ottawa|waterloo|mississauga|kitchener)\b/i;
@@ -94,7 +125,7 @@ const usStateCode = new RegExp(`,\\s*(${usStates})\\b`);
 const remoteOnly = /^\s*remote\s*$/i;
 
 export function matchesTitle(title: string, broad = false): boolean {
-  if (excluded.test(title)) return false;
+  if (excluded.test(title) || nonSoftwareDiscipline.test(title)) return false;
   return entryLevel.test(title) || levelOne.test(title) || (broad && softwareRole.test(title));
 }
 
@@ -109,9 +140,12 @@ export function matchesLocation(location: string | null, isRemote: boolean | nul
 }
 
 export function matchPosting(
-  { title, location, isRemote }: FilterInput,
+  { title, location, isRemote, description }: FilterInput,
   { broad = false }: { broad?: boolean } = {},
 ): FilterResult {
-  const matched = matchesTitle(title, broad) && matchesLocation(location, isRemote);
+  const matched =
+    matchesTitle(title, broad) &&
+    !requiresThreeYears(description) &&
+    matchesLocation(location, isRemote);
   return { matched, priority: matched && !!location && isCanada(location) };
 }
